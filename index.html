@@ -1,13 +1,473 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>stepflo-app</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
-  </body>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Playful Explorer: Data Visualization</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Palette: Vibrant Playful
+         Red: #FF595E
+         Yellow: #FFCA3A
+         Green: #8AC926
+         Blue: #1982C4
+         Purple: #6A4C93
+         Background: #F3F4F6
+    -->
+
+    <style>
+        /* Chart Container Styling - Critical for Responsiveness */
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px; /* Constrain max width for readability */
+            margin-left: auto;
+            margin-right: auto;
+            height: 350px; /* Base height */
+            max-height: 400px;
+        }
+
+        /* Timeline styling without SVG */
+        .timeline-line {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 4px;
+            height: 100%;
+            background-color: #E5E7EB;
+            z-index: 0;
+        }
+        
+        .timeline-node {
+            position: relative;
+            z-index: 10;
+        }
+
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 400px;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 font-sans">
+
+    <!-- PLAN SUMMARY (Hidden Comment) -->
+    <!-- 
+    NARRATIVE PLAN:
+    1. Header/Intro: Establish the "Playful Explorer" theme and the 40-day scope.
+    2. Curriculum Overview: Use a Doughnut chart to show the distribution of the 40 activities across the 4 main sections.
+    3. Holistic Balance: Use a Radar chart to show the "Shape" of the curriculum (Mind, Body, Heart, Spirit).
+    4. Deep Dive - Physical: Bar chart breaking down Gross Motor vs Fine Motor vs Stamina.
+    5. Deep Dive - Social/Emotional: Pie chart comparing Self-Regulation (Internal) vs Social Connection (External).
+    6. Timeline: Visual HTML roadmap of the journey milestones.
+    7. Conclusion: Summary of the "Super Skills" acquired.
+    
+    CHART CHOICES:
+    - Distribution -> Doughnut (Compare parts to whole) -> Chart.js
+    - Development Balance -> Radar (Compare multivariate data) -> Chart.js
+    - Physical Skills -> Horizontal Bar (Compare categories) -> Chart.js
+    - Social/Emotional -> Pie (Composition) -> Chart.js
+    - NO SVG USED.
+    -->
+
+    <!-- Main Container -->
+    <div class="max-w-6xl mx-auto px-4 py-8">
+
+        <!-- Header Section -->
+        <header class="text-center mb-12">
+            <h1 class="text-4xl md:text-6xl font-extrabold text-[#1982C4] mb-4 tracking-tight">THE PLAYFUL EXPLORER</h1>
+            <p class="text-xl text-gray-600 max-w-2xl mx-auto">A data-driven breakdown of the 40-day developmental roadmap for children ages 3-5. Analyzing the balance of intellectual, emotional, and physical growth.</p>
+            
+            <!-- NEW: Ebook Mockups/Images Section - Adjusted to Rectangular Layout -->
+            <div class="mt-8 flex flex-wrap justify-center gap-6">
+                <div class="text-sm italic text-gray-400 w-full mb-2">Ebook Page Spreads Preview:</div>
+                <img src="https://placehold.co/250x150/1982C4/ffffff?text=Lesson+Overview" alt="Ebook Lesson Overview Spread Mockup" class="rounded-lg shadow-xl ring-2 ring-gray-300 object-cover transition duration-300 hover:scale-[1.03]">
+                <img src="https://placehold.co/250x150/FF595E/ffffff?text=Smart+Brain+Activity" alt="Ebook Smart Brain Activity Page Mockup" class="rounded-lg shadow-xl ring-2 ring-gray-300 object-cover hidden sm:block transition duration-300 hover:scale-[1.03]">
+                <img src="https://placehold.co/250x150/8AC926/ffffff?text=Strong+Body+Challenge" alt="Ebook Strong Body Challenge Spread Mockup" class="rounded-lg shadow-xl ring-2 ring-gray-300 object-cover hidden md:block transition duration-300 hover:scale-[1.03]">
+            </div>
+            <!-- END NEW SECTION -->
+
+        </header>
+
+        <!-- KPI Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
+            <div class="bg-white rounded-xl shadow-md p-6 border-l-8 border-[#FF595E] text-center">
+                <div class="text-5xl font-bold text-[#FF595E] mb-2">40</div>
+                <div class="text-lg font-semibold text-gray-500 uppercase tracking-wider">Total Missions</div>
+            </div>
+            <div class="bg-white rounded-xl shadow-md p-6 border-l-8 border-[#FFCA3A] text-center">
+                <div class="text-5xl font-bold text-[#FFCA3A] mb-2">4</div>
+                <div class="text-lg font-semibold text-gray-500 uppercase tracking-wider">Core Areas</div>
+            </div>
+            <div class="bg-white rounded-xl shadow-md p-6 border-l-8 border-[#8AC926] text-center">
+                <div class="text-5xl font-bold text-[#8AC926] mb-2">12+</div>
+                <div class="text-lg font-semibold text-gray-500 uppercase tracking-wider">Super Skills</div>
+            </div>
+            <div class="bg-white rounded-xl shadow-md p-6 border-l-8 border-[#6A4C93] text-center">
+                <div class="text-5xl font-bold text-[#6A4C93] mb-2">∞</div>
+                <div class="text-lg font-semibold text-gray-500 uppercase tracking-wider">Memories</div>
+            </div>
+        </div>
+
+        <!-- Section 1: Curriculum Overview -->
+        <section class="mb-16">
+            <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
+                <div class="p-8 border-b border-gray-100">
+                    <h2 class="text-3xl font-bold text-gray-800 mb-4">Curriculum Composition</h2>
+                    <p class="text-lg text-gray-600 leading-relaxed">
+                        The eBook is structured into four distinct sections. Analysis reveals a balanced approach, with the largest portion dedicated to <strong>Creative Exploration & Mindfulness</strong> (32.5%), recognizing the importance of unstructured play and self-regulation at this age. <strong>Smart Brain</strong> activities form the foundation (30%), followed closely by social and physical development.
+                    </p>
+                </div>
+                <div class="p-8 grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                    <!-- Chart 1: Distribution -->
+                    <div class="flex flex-col">
+                        <div class="chart-container">
+                            <canvas id="curriculumChart"></canvas>
+                        </div>
+                        <p class="text-base text-center text-gray-500 mt-4 italic">Fig 1. Distribution of 40 pages across sections.</p>
+                    </div>
+                    
+                    <!-- Text Context -->
+                    <div class="space-y-6">
+                        <div class="flex items-start">
+                            <span class="text-3xl mr-4">🧠</span>
+                            <div>
+                                <h3 class="font-bold text-xl text-[#FF595E]">Smart Brain (12 Missions)</h3>
+                                <p class="text-base text-gray-600">Focus on Fine Motor, Math Prep, Memory, and Logic.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start">
+                            <span class="text-3xl mr-4">❤️</span>
+                            <div>
+                                <h3 class="font-bold text-xl text-[#FFCA3A]">Happy Heart (8 Missions)</h3>
+                                <p class="text-base text-gray-600">Focus on Emotional Literacy, Empathy, and Connection.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start">
+                            <span class="text-3xl mr-4">💪</span>
+                            <div>
+                                <h3 class="font-bold text-xl text-[#8AC926]">Strong Body (7 Missions)</h3>
+                                <p class="text-base text-gray-600">Focus on Gross Motor, Balance, and Stamina.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start">
+                            <span class="text-3xl mr-4">🎨</span>
+                            <div>
+                                <h3 class="font-bold text-xl text-[#1982C4]">Creative Mind (13 Missions)</h3>
+                                <p class="text-base text-gray-600">Focus on Mindfulness, Sensory Play, and Imagination.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 2: Holistic Development Radar -->
+        <section class="mb-16">
+            <h2 class="text-3xl font-bold text-gray-800 mb-6 border-l-4 border-[#6A4C93] pl-4">Holistic Skill Balance</h2>
+            <div class="bg-white rounded-2xl shadow-lg p-8">
+                <p class="text-lg text-gray-600 mb-8">
+                    By grouping the specific "Super Skills" into broader developmental categories, we can visualize the "shape" of the child's growth. The program emphasizes <strong>Cognitive Processing</strong> and <strong>Social/Emotional Intelligence</strong> heavily, ensuring that physical activity is purposeful and connected to brain development.
+                </p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
+                    <div class="chart-container">
+                        <canvas id="radarChart"></canvas>
+                    </div>
+                    <div class="flex flex-col justify-center space-y-4">
+                        <div class="bg-[#F3F4F6] p-4 rounded-lg">
+                            <h4 class="font-bold text-xl text-[#6A4C93] mb-1">Cognitive Processing</h4>
+                            <p class="text-base text-gray-600">Includes Memory, Planning, Logic, and Math Prep. Essential for school readiness.</p>
+                        </div>
+                        <div class="bg-[#F3F4F6] p-4 rounded-lg">
+                            <h4 class="font-bold text-xl text-[#FF595E] mb-1">Emotional Intelligence</h4>
+                            <p class="text-base text-gray-600">Includes Empathy, Self-Regulation, and identifying feelings.</p>
+                        </div>
+                        <div class="bg-[#F3F4F6] p-4 rounded-lg">
+                            <h4 class="font-bold text-xl text-[#1982C4] mb-1">Sensory & Motor</h4>
+                            <p class="text-base text-gray-600">Includes Proprioception, Balance, Fine/Gross Motor skills.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 3: Deep Dives (Physical & Social) -->
+        <section class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
+            <!-- Physical Analysis -->
+            <div class="bg-white rounded-2xl shadow-lg p-6 flex flex-col">
+                <h3 class="text-2xl font-bold text-gray-800 mb-4">Physical Skill Breakdown</h3>
+                <p class="text-base text-gray-600 mb-6 flex-grow">
+                    The "Strong Body" section isn't just about running. It targets specific physical literacies. <strong>Gross Motor</strong> coordination leads the way, followed closely by <strong>Stamina</strong> and <strong>Balance</strong>.
+                </p>
+                <div class="chart-container" style="height: 300px;">
+                    <canvas id="physicalBarChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Social/Emotional Analysis -->
+            <div class="bg-white rounded-2xl shadow-lg p-6 flex flex-col">
+                <h3 class="text-2xl font-bold text-gray-800 mb-4">Heart & Connection</h3>
+                <p class="text-base text-gray-600 mb-6 flex-grow">
+                    A critical balance exists between understanding oneself (Internal) and connecting with others (External). The data shows a near-perfect <strong>50/50 split</strong> between Emotional Literacy and Social Connection.
+                </p>
+                <div class="chart-container" style="height: 300px;">
+                    <canvas id="socialPieChart"></canvas>
+                </div>
+            </div>
+        </section>
+        
+        <!-- NEW: Button to Navigate Back -->
+        <div class="text-center mb-12">
+            <button onclick="history.back()" class="bg-[#FF595E] hover:bg-red-600 text-white font-bold py-3 px-6 rounded-lg shadow-xl transition duration-300 transform hover:scale-[1.02] flex items-center justify-center mx-auto text-lg">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-6 h-6 mr-2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
+                </svg>
+                Go Back to Previous Page
+            </button>
+        </div>
+        <!-- END NEW BUTTON -->
+
+        <!-- Section 4: The 40-Day Journey Roadmap -->
+        <section class="mb-12">
+            <h2 class="text-3xl font-bold text-gray-800 mb-8 text-center">The 40-Day Journey Map</h2>
+            <div class="relative py-10">
+                <!-- Vertical Line -->
+                <div class="timeline-line"></div>
+
+                <!-- Milestone 1 -->
+                <div class="flex flex-col md:flex-row justify-between items-center mb-12 relative z-10">
+                    <div class="bg-white p-6 rounded-lg shadow-md w-full md:w-5/12 border-t-4 border-[#FF595E]">
+                        <h4 class="font-bold text-xl text-[#FF595E]">Day 1-10: The Foundation</h4>
+                        <p class="text-base text-gray-600 mt-2">Starting with <strong>Fine Motor</strong> skills (Threading) and basic <strong>Math</strong> (Sorting). The journey begins with tangible, hands-on tasks.</p>
+                    </div>
+                    <div class="bg-[#FF595E] text-white w-14 h-14 rounded-full flex items-center justify-center font-bold text-2xl my-4 md:my-0 shadow-lg border-4 border-white">10</div>
+                    <div class="w-full md:w-5/12 text-center md:text-left pl-0 md:pl-8">
+                        <span class="text-4xl">🧩</span>
+                    </div>
+                </div>
+
+                <!-- Milestone 2 -->
+                <div class="flex flex-col md:flex-row-reverse justify-between items-center mb-12 relative z-10">
+                    <div class="bg-white p-6 rounded-lg shadow-md w-full md:w-5/12 border-t-4 border-[#FFCA3A]">
+                        <h4 class="font-bold text-xl text-[#FFCA3A]">Day 11-20: Emotional Awakening</h4>
+                        <p class="text-base text-gray-600 mt-2">Moving into the heart. Learning <strong>Emotional Literacy</strong> (Drawing Feelings) and <strong>Social Bravery</strong> (High-Fives).</p>
+                    </div>
+                    <div class="bg-[#FFCA3A] text-white w-14 h-14 rounded-full flex items-center justify-center font-bold text-2xl my-4 md:my-0 shadow-lg border-4 border-white">20</div>
+                    <div class="w-full md:w-5/12 text-center md:text-right pr-0 md:pr-8">
+                        <span class="text-4xl">🤗</span>
+                    </div>
+                </div>
+
+                <!-- Milestone 3 -->
+                <div class="flex flex-col md:flex-row justify-between items-center mb-12 relative z-10">
+                    <div class="bg-white p-6 rounded-lg shadow-md w-full md:w-5/12 border-t-4 border-[#8AC926]">
+                        <h4 class="font-bold text-xl text-[#8AC926]">Day 21-30: Kinetic Energy</h4>
+                        <p class="text-base text-gray-600 mt-2">The body takes over. <strong>Gross Motor</strong> challenges like "The Tightrope Walker" and "Super Sprinter" build stamina.</p>
+                    </div>
+                    <div class="bg-[#8AC926] text-white w-14 h-14 rounded-full flex items-center justify-center font-bold text-2xl my-4 md:my-0 shadow-lg border-4 border-white">30</div>
+                    <div class="w-full md:w-5/12 text-center md:text-left pl-0 md:pl-8">
+                        <span class="text-4xl">⚡</span>
+                    </div>
+                </div>
+
+                <!-- Milestone 4 -->
+                <div class="flex flex-col md:flex-row-reverse justify-between items-center relative z-10">
+                    <div class="bg-white p-6 rounded-lg shadow-md w-full md:w-5/12 border-t-4 border-[#1982C4]">
+                        <h4 class="font-bold text-xl text-[#1982C4]">Day 31-40: Mastery & Mind</h4>
+                        <p class="text-base text-gray-600 mt-2">Integrating skills. <strong>Mindfulness</strong> (Starfish Breathing) meets <strong>Complex Play</strong> (Fort Building). The explorer graduates!</p>
+                    </div>
+                    <div class="bg-[#1982C4] text-white w-14 h-14 rounded-full flex items-center justify-center font-bold text-2xl my-4 md:my-0 shadow-lg border-4 border-white">40</div>
+                    <div class="w-full md:w-5/12 text-center md:text-right pr-0 md:pr-8">
+                        <span class="text-4xl">🎓</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <footer class="text-center text-gray-500 text-base mt-16 pt-8 border-t border-gray-200">
+            <p>© The Playful Explorer Analysis. Data derived from the 40-page activity guide.</p>
+        </footer>
+
+    </div>
+
+    <!-- Script for Charts -->
+    <script>
+        // --- HELPER FUNCTION: Label Splitting ---
+        function formatLabel(label) {
+            if (typeof label !== 'string' || label.length <= 16) return label;
+            const words = label.split(' ');
+            const lines = [];
+            let currentLine = words[0];
+
+            for (let i = 1; i < words.length; i++) {
+                if ((currentLine + ' ' + words[i]).length > 16) {
+                    lines.push(currentLine);
+                    currentLine = words[i];
+                } else {
+                    currentLine += ' ' + words[i];
+                }
+            }
+            lines.push(currentLine);
+            return lines;
+        }
+
+        // --- COMMON CONFIG ---
+        Chart.defaults.font.family = "'Segoe UI', 'Roboto', 'Helvetica', 'Arial', sans-serif";
+        Chart.defaults.font.size = 15; /* Increased from 13 to 15 */
+        
+        // Tooltip Callback for Multi-line Labels
+        const tooltipConfig = {
+            callbacks: {
+                title: function(tooltipItems) {
+                    const item = tooltipItems[0];
+                    let label = item.chart.data.labels[item.dataIndex];
+                    if (Array.isArray(label)) {
+                        return label.join(' ');
+                    } else {
+                        return label;
+                    }
+                }
+            }
+        };
+
+        // --- DATA PREPARATION ---
+        
+        // Chart 1: Curriculum Distribution
+        const ctxCurriculum = document.getElementById('curriculumChart').getContext('2d');
+        const curriculumChart = new Chart(ctxCurriculum, {
+            type: 'doughnut',
+            data: {
+                labels: ['Smart Brain (Intellectual)', 'Happy Heart (Social/Emo)', 'Strong Body (Physical)', 'Creative Mind (Exploration)'].map(formatLabel),
+                datasets: [{
+                    data: [12, 8, 7, 13],
+                    backgroundColor: ['#FF595E', '#FFCA3A', '#8AC926', '#1982C4'],
+                    borderWidth: 0,
+                    hoverOffset: 10
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: { padding: 20, usePointStyle: true, font: { size: 14 } } /* Increased font size */
+                    },
+                    tooltip: tooltipConfig,
+                    title: {
+                        display: true,
+                        text: 'Total Missions: 40',
+                        padding: { bottom: 20 },
+                        font: { size: 18, weight: 'bold' } /* Increased title size */
+                    }
+                },
+                cutout: '60%'
+            }
+        });
+
+        // Chart 2: Radar Chart - Holistic Balance
+        const ctxRadar = document.getElementById('radarChart').getContext('2d');
+        const radarChart = new Chart(ctxRadar, {
+            type: 'radar',
+            data: {
+                labels: ['Fine Motor', 'Gross Motor', 'Cognitive/Logic', 'Social Conn.', 'Emotional Reg.', 'Sensory/Mindful'].map(formatLabel),
+                datasets: [{
+                    label: 'Skill Emphasis Intensity',
+                    data: [5, 9, 10, 6, 6, 8],
+                    fill: true,
+                    backgroundColor: 'rgba(106, 76, 147, 0.2)',
+                    borderColor: '#6A4C93',
+                    pointBackgroundColor: '#6A4C93',
+                    pointBorderColor: '#fff',
+                    pointHoverBackgroundColor: '#fff',
+                    pointHoverBorderColor: '#6A4C93'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    r: {
+                        angleLines: { color: 'rgba(0,0,0,0.1)' },
+                        grid: { color: 'rgba(0,0,0,0.1)' },
+                        pointLabels: {
+                            font: { size: 14, weight: 'bold' }, /* Increased font size */
+                            color: '#4B5563'
+                        },
+                        suggestedMin: 0,
+                        suggestedMax: 10
+                    }
+                },
+                plugins: {
+                    legend: { display: false },
+                    tooltip: tooltipConfig
+                }
+            }
+        });
+
+        // Chart 3: Physical Skills Bar Chart
+        const ctxPhysical = document.getElementById('physicalBarChart').getContext('2d');
+        const physicalBarChart = new Chart(ctxPhysical, {
+            type: 'bar',
+            data: {
+                labels: ['Gross Motor', 'Stamina', 'Balance & Coord', 'Leg Strength', 'Flexibility', 'Tidiness'].map(formatLabel),
+                datasets: [{
+                    label: 'Number of Missions',
+                    data: [4, 2, 1, 1, 1, 2],
+                    backgroundColor: '#8AC926',
+                    borderRadius: 6
+                }]
+            },
+            options: {
+                indexAxis: 'y',
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: {
+                        beginAtZero: true,
+                        grid: { display: false }
+                    },
+                    y: {
+                        grid: { display: false }
+                    }
+                },
+                plugins: {
+                    legend: { display: false },
+                    tooltip: tooltipConfig
+                }
+            }
+        });
+
+        // Chart 4: Social vs Emotional Pie
+        const ctxSocial = document.getElementById('socialPieChart').getContext('2d');
+        const socialPieChart = new Chart(ctxSocial, {
+            type: 'pie',
+            data: {
+                labels: ['Internal (Self-Regulation)', 'External (Social Connection)'].map(formatLabel),
+                datasets: [{
+                    data: [3, 5],
+                    backgroundColor: ['#FFCA3A', '#1982C4'],
+                    borderWidth: 2,
+                    borderColor: '#ffffff'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'right',
+                        labels: { usePointStyle: true, font: { size: 14 } } /* Increased font size */
+                    },
+                    tooltip: tooltipConfig
+                }
+            }
+        });
+
+    </script>
+</body>
 </html>
